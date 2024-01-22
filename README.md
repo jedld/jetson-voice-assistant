@@ -28,11 +28,19 @@ Hardware
 
 This is the hardware I used. Other devices are possible:
 
-- Vention USB soundcard for sound output
-- Logitech Blue Snowball Ice for the mic
+- Vention USB soundcard for sound output (can be something else but should at least support 48000 sample rate)
+- Logitech Blue Snowball Ice for the mic (can be something else)
+- Nvidia Jetson Orin Nano 8GB Developer Board
+- Yahboom Jetson-Cube Case (Optional - but the case and LED lights makes this prettier)
 
 Running in Docker
 =================
+
+Docker is the preferred way to run this.
+
+Download LLM related models from Huggingface.
+
+For this voice assistant OpenOrca Mistral 7B in GGUF format was used (mistral-7b-openorca.Q2_K.gguf). The specific model can be changed, though you have to be mindful of the model size. Place it under the /model directory (or wherever you mapped this location to using Docker). If you do change the model consider changing the prompting as well in the format_mistral_orca function.
 
 Building...
 
@@ -45,3 +53,21 @@ Running... (replace home directory references wih your project path)
 ```
 docker run --runtime=nvidia --device /dev/snd --device /dev/i2c-7 --network=host -v=/home/joseph/workspace/voice-assistant/model:/model -v=/home/joseph/workspace/voice-assistant/voices:/usr/local/app/voices -v=/home/joseph/workspace/voice-assistant/start-voice-assistant.py:/usr/local/app/start-voice-assistant.py -v=/home/joseph/workspace/voice-assistant/coqui_tts.py:/usr/local/app/conqui_tts.py -v=/home/joseph/workspace/voice-assistant/local:/root/.local -v=/home/joseph/workspace/voice-assistant/cache:/root/.cache -t latest
 ```
+
+The only thing you need to put a file in is in /model where you have to place the downloaded GGUF Mistral 7B model into.
+
+Docker Environment Variables
+============================
+
+
+LLM_MODEL - The filename of the model (default: mistral-7b-openorca.Q2_K.gguf) possible to use others but haven't tried.
+WHISPER_MODEL - OpenAI whispher model name e.g. (tiny, tiny.en, base, base.en) - See Open AI's whisper for details. (This is automatically downloaded during first boot)
+VOCALIZER_CLASS - Default to CoquiTTS, if using Coqui's framework for text to speech
+INPUT_DEVICE - Name of the Input device (can check using aplay -l)
+OUTPUT_DEVICE - Name of the Output device (can check using aplay -l)
+OUTPUT_DEVICE_SAMPLE_RATE - Sample rate of output device ( default 48000)
+CONTEXT_LENGTH - LLM context length (default 340) - increasing this may cause jetson to crash due to OOM
+
+
+
+
