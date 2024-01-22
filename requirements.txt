@@ -1,0 +1,16 @@
+simpleaudio
+ml_dtypes
+sounddevice
+openai-whisper
+flask
+pyaudio
+openwakeword
+smbus
+Adafruit_SSD1306
+Pillow
+bark
+noisereduce
+langid
+librosa
+wave
+scipy
