@@ -44,14 +44,20 @@ For this voice assistant OpenOrca Mistral 7B in GGUF format was used (mistral-7b
 
 Building...
 
+clone the project
+
 ```
+git clone git@github.com:jedld/jetson-voice-assistant.git
+cd jetson-voice-assistant
 docker build . -t latest
 ```
 
 Running... (replace home directory references wih your project path)
 
 ```
-docker run --runtime=nvidia --device /dev/snd --device /dev/i2c-7 --network=host -v=/home/joseph/workspace/voice-assistant/model:/model -v=/home/joseph/workspace/voice-assistant/voices:/usr/local/app/voices -v=/home/joseph/workspace/voice-assistant/start-voice-assistant.py:/usr/local/app/start-voice-assistant.py -v=/home/joseph/workspace/voice-assistant/coqui_tts.py:/usr/local/app/conqui_tts.py -v=/home/joseph/workspace/voice-assistant/local:/root/.local -v=/home/joseph/workspace/voice-assistant/cache:/root/.cache -t latest
+
+
+docker run --runtime=nvidia --device /dev/snd --device /dev/i2c-7 --network=host -v=./model:/model -v=./voices:/usr/local/app/voices. -v=./local:/root/.local -v=./cache:/root/.cache -t voice-assistant:latest
 ```
 
 The only thing you need to put a file in is in /model where you have to place the downloaded GGUF Mistral 7B model into.
