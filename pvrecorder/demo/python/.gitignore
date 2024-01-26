@@ -1,7 +1,0 @@
-venv
-dist
-MANIFEST.in
-pvrecorderdemo
-pvrecorderdemo.egg-info
-build
-__pycache__

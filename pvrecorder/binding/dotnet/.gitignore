@@ -1,8 +1,0 @@
-.vs
-PvRecorder/bin/**
-PvRecorder/obj/**
-PvRecorder/Properties/**
-PvRecorderTest/bin/**
-PvRecorderTest/obj/**
-PvRecorderTest/Properties/**
-*.user
