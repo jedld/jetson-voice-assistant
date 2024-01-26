@@ -63,15 +63,15 @@ The only thing you need to put a file in is in /model where you have to place th
 Docker Environment Variables
 ============================
 
-|------------------------|-----------------------------------------------------------------------------------------------------------------|
-|      LLM_MODEL         | The filename of the model (default: mistral-7b-openorca.Q2_K.gguf) possible to use others but haven't tried     |
-|    WHISPER_MODEL       | OpenAI whispher model name e.g. (tiny, tiny.en, base, base.en) - See Open AI's whisper for details. (This is automatically downloaded during first boot) |
-|   VOCALIZER_CLASS      | Default to CoquiTTS, if using Coqui's framework for text to speech                                               |
-|    INPUT_DEVICE        | Name of the Input device (can check using aplay -l)                                                             |
-|    OUTPUT_DEVICE       | Name of the Output device (can check using aplay -l)                                                            |
-| OUTPUT_DEVICE_SAMPLE_RATE | Sample rate of output device ( default 48000)                                                                   |
-|    CONTEXT_LENGTH      | LLM context length (default 340) - increasing this may cause jetson to crash due to OOM                          |
-|------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Env Var Name                | Default Value                            | Description                                                                                          |
+|-----------------------------|------------------------------------------|------------------------------------------------------------------------------------------------------|
+| LLM_MODEL                   | mistral-7b-openorca.Q2_K.gguf            | The filename of the model. Possible to use others but haven't tried.                                 |
+| WHISPER_MODEL               | base                                     | OpenAI whisper model name. See Open AI's whisper for details. Automatically downloaded during first boot. |
+| VOCALIZER_CLASS             | CoquiTTS                                 | Default to CoquiTTS if using Coqui's framework for text to speech.                                    |
+| INPUT_DEVICE                |                                          | Name of the Input device. Can be checked using `aplay -l`.                                            |
+| OUTPUT_DEVICE               |                                          | Name of the Output device. Can be checked using `aplay -l`.                                           |
+| OUTPUT_DEVICE_SAMPLE_RATE   | 48000                                    | Sample rate of the output device. Default is 48000.                                                  |
+| CONTEXT_LENGTH              | 340                                      | LLM context length. Increasing this may cause Jetson to crash due to OOM.                             |
 
 License
 =======
