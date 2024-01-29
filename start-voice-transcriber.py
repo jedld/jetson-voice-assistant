@@ -22,6 +22,7 @@ import librosa
 import wave
 from scipy.io import wavfile
 from scipy.signal import resample
+from googletrans import Translator, LANGUAGES
 
 WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small")
 
@@ -44,6 +45,7 @@ FOLLOW_UP_THRESHOLD = 5.0
 def transcribe_worker(sound_queue: mp.Queue):
     RATE = 16000
     whisper_model = whisper.load_model(WHISPER_MODEL)
+    translator = Translator()
     with open(OUTPUT_FILENAME, "w") as f:
         while True:
             try:
@@ -52,7 +54,6 @@ def transcribe_worker(sound_queue: mp.Queue):
                 audio_data = audio_data.astype(np.float32) / 32768.0
                 if np.all(np.abs(audio_data) < 0.02):
                     print("no audio detected")
-                    silence_timer = None
                     continue
                 
                 start_transcribe = time.time()
@@ -61,8 +62,9 @@ def transcribe_worker(sound_queue: mp.Queue):
 
                 # strip and normalize spaces
                 text = result['text'].strip().replace("  ", " ")
-                f.write(text + "\n")
-                print("text:", text)
+                translated = translator.translate(text, dest='en')
+                f.write(translated + "\n")
+                print("text:", translated)
             except Exception as e:
                 print(e)
             finally:
