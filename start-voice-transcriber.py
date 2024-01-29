@@ -22,7 +22,6 @@ import librosa
 import wave
 from scipy.io import wavfile
 from scipy.signal import resample
-from googletrans import Translator, LANGUAGES
 
 WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small")
 
@@ -53,12 +52,10 @@ def transcribe_worker(sound_queue: mp.Queue):
                 audio_data = nr.reduce_noise(y=audio, sr=RATE, use_torch=True)
                 audio_data = audio_data.astype(np.float32) / 32768.0
                 if np.all(np.abs(audio_data) < 0.02):
-                    print("no audio detected")
                     continue
                 
                 start_transcribe = time.time()
                 result = whisper_model.transcribe(audio_data)
-                print(f"transcribed in {time.time() - start_transcribe} seconds")
 
                 # strip and normalize spaces
                 text = result['text'].strip().replace("  ", " ")
@@ -87,7 +84,6 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
     while True:
         try:
             mic_stream = audio_device.open(format=FORMAT, channels=CHANNELS, input_device_index=pyaudio_device_index, rate=RATE, input=True, frames_per_buffer=CHUNK)
-            print("recording...")
             silence_timer = time.time()
             while True:
                 np_frame = np.frombuffer(mic_stream.read(CHUNK), dtype=np.int16).astype(np.float32)
@@ -95,12 +91,10 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
                 
                 # Check if current frame is silence
                 if np.all((np.abs(np_frame) / 32768.0 ) < 0.02):
-                    print("_", end="", flush=True)
                     if time.time() - silence_timer > silence_duration:
                         break  # Break the loop after 3 seconds of silence
                 else:
                     silence_timer = time.time()
-                    print("^", end="", flush=True)
                    
             try:
                 mic_stream.stop_stream()
@@ -108,14 +102,12 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
             except Exception as e:
                 print(e)
         except KeyboardInterrupt:
-            print("stopping mic stream")
             mic_stream.stop_stream()
             mic_stream.close()
             exit()
         except Exception as e:
             print(e)
 
-        print("stopped recording")
         
         audio_array = list(audio_buffer)
         audio_data = np.concatenate(audio_array)
