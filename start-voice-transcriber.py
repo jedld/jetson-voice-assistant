@@ -50,19 +50,13 @@ def transcribe_worker(sound_queue: mp.Queue):
         while True:
             try:
                 audio = sound_queue.get()
-                audio_data = nr.reduce_noise(y=audio, sr=RATE, use_torch=True)
-                audio_data = audio_data.astype(np.float32) / 32768.0
-                if np.all(np.abs(audio_data) < 0.02):
-                    continue
-                
-                
-                result = whisper_model.transcribe(audio_data)
+                result = whisper_model.transcribe(audio)
 
                 # strip and normalize spaces
                 text = result['text'].strip().replace("  ", " ")
-                translated = translator.translate(text, src='ja', dest='en')
+                translated = translator.translate(text, dest='en')
                 f.write(translated.text + "\n")
-                print("text:", translated.text)
+                print(translated.text)
             except Exception as e:
                 print(e)
             finally:
@@ -114,6 +108,12 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
         audio_array = list(audio_buffer)
         audio_data = np.concatenate(audio_array)
         audio_buffer.clear()
+        audio_data = nr.reduce_noise(y=audio_data, sr=RATE, use_torch=True)
+        audio_data = audio_data.astype(np.float32) / 32768.0
+
+        if np.all(np.abs(audio_data) < 0.02):
+            continue
+
         sound_queue.put(audio_data)
                
 
