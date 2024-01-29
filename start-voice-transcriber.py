@@ -23,7 +23,7 @@ import wave
 from scipy.io import wavfile
 from scipy.signal import resample
 
-WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "base.en")
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small")
 
 INPUT_DEVICE_NAME = os.environ.get("INPUT_DEVICE", default="Blue Snowball")
 OUTPUT_FILENAME = os.environ.get("OUTPUT_FILENAME", default="transcription.txt")
@@ -38,7 +38,7 @@ ctx = mp.get_context('spawn')
 sound_queue = ctx.JoinableQueue()
 start_conversation_threshold = 5.0 # Give the user 5 seconds to start a conversation before returning to standby
 silence_threshold = 0.02  # This value might need adjustment
-silence_duration = 2.0  # Duration of silence in seconds before determining if the user is done with his/her sentence
+silence_duration = 1.0  # Duration of silence in seconds before determining if the user is done with his/her sentence
 FOLLOW_UP_THRESHOLD = 5.0
 
 def transcribe_worker(sound_queue: mp.Queue):
