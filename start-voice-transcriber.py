@@ -55,8 +55,8 @@ def transcribe_worker(sound_queue: mp.Queue):
     whisper_model = whisper.load_model(WHISPER_MODEL)
     while True:
         try:
-            sound_queue = sound_queue.get()
-            audio_data = nr.reduce_noise(y=sound_queue, sr=RATE, use_torch=True)
+            audio = sound_queue.get()
+            audio_data = nr.reduce_noise(y=audio, sr=RATE, use_torch=True)
             audio_data = audio_data.astype(np.float32) / 32768.0
             if np.all(np.abs(audio_data) < 0.02):
                 print("no audio detected")
@@ -88,6 +88,7 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
     RATE = 16000
     CHUNK = 2560
 
+    mic_stream = None
     while True:
         try:
             mic_stream = audio_device.open(format=FORMAT, channels=CHANNELS, input_device_index=pyaudio_device_index, rate=RATE, input=True, frames_per_buffer=CHUNK)
@@ -116,13 +117,6 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
             mic_stream.stop_stream()
             mic_stream.close()
             exit()
-        except IOError as e: # Reset on Input Overflow errors
-            try:
-                mic_stream.stop_stream()
-                mic_stream.close()
-            except Exception as e:
-                print(e)
-            continue
         except Exception as e:
             print(e)
 
@@ -136,7 +130,7 @@ def start_speech_recognizer(sound_queue, audio_device, pyaudio_device_index):
 
 if __name__ == '__main__':
 
-    p = ctx.Process(target=transcribe_worker, args=(sound_queue))
+    p = ctx.Process(target=transcribe_worker, args=(sound_queue,))
     p.start()
         
     audio_device = pyaudio.PyAudio()
