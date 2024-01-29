@@ -45,7 +45,7 @@ FOLLOW_UP_THRESHOLD = 5.0
 def transcribe_worker(sound_queue: mp.Queue):
     RATE = 16000
     whisper_model = whisper.load_model(WHISPER_MODEL)
-    translator = Translator()
+
     with open(OUTPUT_FILENAME, "w") as f:
         while True:
             try:
@@ -62,9 +62,8 @@ def transcribe_worker(sound_queue: mp.Queue):
 
                 # strip and normalize spaces
                 text = result['text'].strip().replace("  ", " ")
-                translated = translator.translate(text, dest='en')
-                f.write(translated + "\n")
-                print("text:", translated)
+                f.write(text + "\n")
+                print("text:", text)
             except Exception as e:
                 print(e)
             finally:
